@@ -1,0 +1,6 @@
+include ':VersionAutoupdate5'
+include ':VersionAutoupdate4'
+include ':VersionAutoupdate3'
+include ':VersionAutoupdate2'
+include ':VersionAutoupdate1'
+rootProject.name = "VersionAutoupdate"

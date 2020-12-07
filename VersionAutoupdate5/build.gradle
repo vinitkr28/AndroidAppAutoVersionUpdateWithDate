@@ -1,0 +1,77 @@
+apply plugin: 'com.android.application'
+apply from: './version_autoupdate.gradle'
+apply from: './dependencies.gradle'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "vinit.versionautoupdate5"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 1
+        versionName mVersionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('C:\\vinit_drive\\Android Samples\\VersionAutoupdate\\VersionAutoupdate.jks')
+            storePassword 'sample1'
+            keyAlias 'SampleAlias'
+            keyPassword 'sample2'
+        }
+    }
+//    hw.hci.wa_v0.0.0_b8D_d(13-06-2020-12-47).apk
+//    cleanOutputDir
+
+    def releaseFileName = ""
+    def debugFileName = ""
+    buildTypes {
+        debug{
+            versionNameSuffix "-debug"
+
+            debugFileName = "${mApkFileName}D_d(${formattedDate}).apk"
+            buildConfigField "String", "APK_FILE_NAME", "\"$debugFileName\""
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            releaseFileName = "${mApkFileName}R_d(${formattedDate}).apk"
+            buildConfigField "String", "APK_FILE_NAME", "\"$releaseFileName\""
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def newApkName = ""
+            if (variant.name == "debug"){
+                newApkName = debugFileName
+            } else if(variant.name == "release") {
+                newApkName = releaseFileName
+            } else {
+                newApkName = mApkFileName + variant.name + "_d(" + formattedDate + ").apk"
+            }
+
+            outputFileName = new File(newApkName)
+        }
+    }
+}
+
+ext {
+    ESPRESSO_CORE_VERSION = '3.2.0'
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation "junit:junit:$testImplementation_version"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$ESPRESSO_CORE_VERSION"
+
+}
